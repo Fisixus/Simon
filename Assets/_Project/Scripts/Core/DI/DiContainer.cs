@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using UnityEngine;
 
 namespace Simon.Core.DI
 {
@@ -99,6 +100,7 @@ namespace Simon.Core.DI
 
         public void Inject(object instance)
         {
+            if (instance == null) return;
             var type = instance.GetType();
             
             // Field Injection
@@ -117,6 +119,75 @@ namespace Simon.Core.DI
             foreach (var prop in props)
             {
                 prop.SetValue(instance, Resolve(prop.PropertyType));
+            }
+        }
+
+        public void InjectGameObject(GameObject gameObject)
+        {
+            var components = gameObject.GetComponentsInChildren<MonoBehaviour>(true);
+            foreach (var comp in components)
+            {
+                Inject(comp);
+            }
+        }
+
+        // Factory Registration Helpers
+        public BindingCondition RegisterFactory<T, TFactory>() where TFactory : class
+        {
+            return Bind<TFactory>().AsSingle();
+        }
+
+        public BindingCondition RegisterFactory<T, TFactory>(T prefab) where T : UnityEngine.Object
+        {
+            var factoryType = typeof(TFactory);
+            var factory = (TFactory)Activator.CreateInstance(factoryType);
+            
+            var setPrefabMethod = factoryType.GetMethod("SetPrefab");
+            if (setPrefabMethod != null)
+                setPrefabMethod.Invoke(factory, new object[] { prefab });
+
+            return Bind<TFactory>().FromInstance(factory).AsSingle();
+        }
+
+        // Pool Registration Helpers
+        public PoolBindingCondition RegisterPool<T, TPool>() where TPool : class
+        {
+            var poolType = typeof(TPool);
+            var pool = (TPool)Activator.CreateInstance(poolType);
+            Bind<TPool>().FromInstance(pool).AsSingle();
+            return new PoolBindingCondition(pool);
+        }
+
+        public PoolBindingCondition RegisterPool<T, TPool>(T prefab) where T : UnityEngine.Object
+        {
+            var poolType = typeof(TPool);
+            var pool = (TPool)Activator.CreateInstance(poolType);
+            
+            var setPrefabMethod = poolType.GetMethod("SetPrefab");
+            if (setPrefabMethod != null)
+                setPrefabMethod.Invoke(pool, new object[] { prefab });
+
+            Bind<TPool>().FromInstance(pool).AsSingle();
+            return new PoolBindingCondition(pool);
+        }
+
+        internal class PoolBindingCondition
+        {
+            private readonly object _pool;
+            public PoolBindingCondition(object pool) => _pool = pool;
+
+            public PoolBindingCondition WithMinimumCount(int count)
+            {
+                var prop = _pool.GetType().GetProperty("MinimumCount");
+                if (prop != null) prop.SetValue(_pool, count);
+                return this;
+            }
+
+            public PoolBindingCondition WithShrinkPeriod(float period)
+            {
+                var prop = _pool.GetType().GetProperty("ShrinkPeriod");
+                if (prop != null) prop.SetValue(_pool, period);
+                return this;
             }
         }
 
