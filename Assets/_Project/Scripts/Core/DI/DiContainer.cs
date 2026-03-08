@@ -22,6 +22,12 @@ namespace Simon.Core.DI
     {
         private readonly Dictionary<Type, Binding> _bindings = new Dictionary<Type, Binding>();
         private readonly List<object> _singletons = new List<object>();
+        private readonly DiContainer _parent;
+
+        public DiContainer(DiContainer parent = null)
+        {
+            _parent = parent;
+        }
 
         public BindingCondition Bind<T>()
         {
@@ -37,25 +43,30 @@ namespace Simon.Core.DI
 
         public object Resolve(Type type)
         {
-            if (!_bindings.TryGetValue(type, out var binding))
+            if (_bindings.TryGetValue(type, out var binding))
             {
-                return Instantiate(type);
+                if (binding.IsSingleton && binding.Instance != null)
+                {
+                    return binding.Instance;
+                }
+
+                var instance = Instantiate(binding.ImplementationType);
+
+                if (binding.IsSingleton)
+                {
+                    binding.Instance = instance;
+                    _singletons.Add(instance);
+                }
+
+                return instance;
             }
 
-            if (binding.IsSingleton && binding.Instance != null)
+            if (_parent != null)
             {
-                return binding.Instance;
+                return _parent.Resolve(type);
             }
 
-            var instance = Instantiate(binding.ImplementationType);
-
-            if (binding.IsSingleton)
-            {
-                binding.Instance = instance;
-                _singletons.Add(instance);
-            }
-
-            return instance;
+            return Instantiate(type);
         }
 
         public T Instantiate<T>()
@@ -120,7 +131,7 @@ namespace Simon.Core.DI
                 }
             }
 
-            // Second pass: Initialize all IInitializable singletons
+            // Second pass: Initialize all IInitializable singletons that exist
             foreach (var singleton in _singletons.ToList())
             {
                 if (singleton is IInitializable initializable)

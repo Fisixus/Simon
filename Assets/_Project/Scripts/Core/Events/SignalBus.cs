@@ -8,6 +8,7 @@ namespace Simon.Core.Events
     internal class SignalBus
     {
         private readonly Dictionary<Type, List<Action<ISignal>>> _subscribers = new Dictionary<Type, List<Action<ISignal>>>();
+        private readonly Dictionary<Delegate, Action<ISignal>> _callbackMapping = new Dictionary<Delegate, Action<ISignal>>();
 
         public void DeclareSignal<TSignal>() where TSignal : ISignal
         {
@@ -24,15 +25,30 @@ namespace Simon.Core.Events
             {
                 DeclareSignal<TSignal>();
             }
-            _subscribers[type].Add(signal => callback((TSignal)signal));
+
+            Action<ISignal> wrappedCallback = signal => callback((TSignal)signal);
+            _callbackMapping[callback] = wrappedCallback;
+            _subscribers[type].Add(wrappedCallback);
         }
 
-        public void Fire<TSignal>(TSignal signal) where TSignal : ISignal
+        public void Unsubscribe<TSignal>(Action<TSignal> callback) where TSignal : ISignal
+        {
+            var type = typeof(TSignal);
+            if (_subscribers.TryGetValue(type, out var subscribers) && _callbackMapping.TryGetValue(callback, out var wrappedCallback))
+            {
+                subscribers.Remove(wrappedCallback);
+                _callbackMapping.Remove(callback);
+            }
+        }
+
+        public void Invoke<TSignal>(TSignal signal) where TSignal : ISignal
         {
             var type = typeof(TSignal);
             if (_subscribers.TryGetValue(type, out var subscribers))
             {
-                foreach (var subscriber in subscribers)
+                // Use a copy to avoid modification during iteration
+                var subscribersCopy = new List<Action<ISignal>>(subscribers);
+                foreach (var subscriber in subscribersCopy)
                 {
                     subscriber?.Invoke(signal);
                 }
