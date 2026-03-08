@@ -5,17 +5,14 @@ using UnityEngine;
 
 namespace Simon.Tests
 {
-    internal class TestController : MvcController<TestView, TestModel>
+    internal class TestController : MvcController<ITestView, TestModel>
     {
         [Inject] private SignalBus _signalBus;
-        [Inject] private TestView _view;
 
         public override void Initialize()
         {
-            // Set up manually for now, or use a Model binding if we wanted it automated
-            // But we're keeping Models as data containers.
-            var testModel = new TestModel { Value = 100 };
-            Setup(_view, testModel);
+            // Models are just data containers, so we create it here
+            Setup(new TestModel { Value = 100 });
 
             View.OnButtonClicked += HandleButtonClick;
             View.SetText($"Initial value from model: {Model.Value}");

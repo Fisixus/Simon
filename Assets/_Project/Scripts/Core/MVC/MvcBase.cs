@@ -1,22 +1,25 @@
-using UnityEngine;
 using Simon.Core.DI;
 
 namespace Simon.Core.MVC
 {
-    internal abstract class MvcView : MonoBehaviour
+    internal interface IMvcView 
+    {
+        void Initialize();
+    }
+
+    internal abstract class MvcView : UnityEngine.MonoBehaviour, IMvcView
     {
         public abstract void Initialize();
     }
 
-    internal abstract class MvcController<TView, TModel> : IInitializable, IDisposable
-        where TView : MvcView
+    internal abstract class MvcController<TViewInterface, TModel> : IInitializable, IDisposable
+        where TViewInterface : class, IMvcView
     {
-        public TView View { get; protected set; }
+        [Inject] public TViewInterface View { get; protected set; }
         public TModel Model { get; protected set; }
 
-        public virtual void Setup(TView view, TModel model)
+        public virtual void Setup(TModel model)
         {
-            View = view;
             Model = model;
         }
 

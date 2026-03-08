@@ -13,10 +13,10 @@ namespace Simon.Tests
             // 1. Bind Core Services
             Container.Bind<SignalBus>().FromInstance(new SignalBus()).AsSingle();
             
-            // 2. Bind the View instance
-            Container.Bind<TestView>().FromInstance(_testView).AsSingle();
+            // 2. Bind the View instance to its Interface
+            Container.Bind<ITestView>().FromInstance(_testView).AsSingle();
             
-            // 3. Bind the Controller as a singleton and make it NonLazy so it starts with the container
+            // 3. Bind the Controller
             Container.Bind<TestController>().AsSingle().NonLazy();
         }
     }

@@ -1,15 +1,21 @@
 using Simon.Core.MVC;
-using UnityEngine;
-using UnityEngine.UI;
+using System;
 
 namespace Simon.Tests
 {
-    internal class TestView : MvcView
+    internal interface ITestView : IMvcView
     {
-        [SerializeField] private Text _displayText;
-        [SerializeField] private Button _actionButton;
+        event Action OnButtonClicked;
+        void SetText(string text);
+        void Cleanup();
+    }
 
-        public System.Action OnButtonClicked;
+    internal class TestView : MvcView, ITestView
+    {
+        [UnityEngine.SerializeField] private UnityEngine.UI.Text _displayText;
+        [UnityEngine.SerializeField] private UnityEngine.UI.Button _actionButton;
+
+        public event Action OnButtonClicked;
 
         public override void Initialize()
         {
@@ -22,7 +28,7 @@ namespace Simon.Tests
             if (_displayText != null)
                 _displayText.text = text;
             else
-                Debug.Log($"[TestView] {text}");
+                UnityEngine.Debug.Log($"[TestView] {text}");
         }
 
         public void Cleanup()
