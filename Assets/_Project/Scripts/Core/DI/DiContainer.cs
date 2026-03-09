@@ -6,24 +6,27 @@ using UnityEngine;
 
 namespace Simon.Core.DI
 {
-    internal interface IInitializable
+    public interface IInitializable
     {
         void Initialize();
     }
 
-    internal interface IDisposable
-    {
-        void Dispose();
-    }
-
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-    internal class InjectAttribute : Attribute { }
+    public class InjectAttribute : Attribute { }
 
-    internal class DiContainer : IDisposable
+    public class DiContainer : IDisposable
     {
         private readonly Dictionary<Type, Binding> _bindings = new Dictionary<Type, Binding>();
         private readonly List<object> _singletons = new List<object>();
+        private readonly HashSet<object> _injectedObjects = new HashSet<object>();
         private readonly DiContainer _parent;
+        private readonly Stack<Type> _resolutionStack = new Stack<Type>();
+
+        // Reflection Cache
+        private static readonly Dictionary<Type, ConstructorInfo> _constructorCache = new Dictionary<Type, ConstructorInfo>();
+        private static readonly Dictionary<Type, FieldInfo[]> _fieldCache = new Dictionary<Type, FieldInfo[]>();
+        private static readonly Dictionary<Type, PropertyInfo[]> _propertyCache = new Dictionary<Type, PropertyInfo[]>();
+        private static readonly Dictionary<Type, MethodInfo[]> _methodCache = new Dictionary<Type, MethodInfo[]>();
 
         public DiContainer(DiContainer parent = null)
         {
@@ -34,7 +37,7 @@ namespace Simon.Core.DI
         {
             var binding = new Binding { ContractType = typeof(T), ImplementationType = typeof(T) };
             _bindings[typeof(T)] = binding;
-            return new BindingCondition(binding);
+            return new BindingCondition(binding, this);
         }
 
         public T Resolve<T>()
@@ -44,30 +47,56 @@ namespace Simon.Core.DI
 
         public object Resolve(Type type)
         {
-            if (_bindings.TryGetValue(type, out var binding))
+            if (_resolutionStack.Contains(type))
             {
-                if (binding.IsSingleton && binding.Instance != null)
-                {
-                    return binding.Instance;
-                }
-
-                var instance = Instantiate(binding.ImplementationType);
-
-                if (binding.IsSingleton)
-                {
-                    binding.Instance = instance;
-                    _singletons.Add(instance);
-                }
-
-                return instance;
+                throw new Exception($"Circular dependency detected for type {type.FullName}. Stack: {string.Join(" -> ", _resolutionStack.Select(t => t.Name))}");
             }
 
-            if (_parent != null)
+            _resolutionStack.Push(type);
+            try
             {
-                return _parent.Resolve(type);
-            }
+                if (_bindings.TryGetValue(type, out var binding))
+                {
+                    if (binding.IsSingleton && binding.Instance != null)
+                    {
+                        Inject(binding.Instance);
+                        if (!_singletons.Contains(binding.Instance))
+                        {
+                            _singletons.Add(binding.Instance);
+                        }
+                        return binding.Instance;
+                    }
 
-            return Instantiate(type);
+                    var instance = Instantiate(binding.ImplementationType);
+
+                    if (binding.IsSingleton)
+                    {
+                        binding.Instance = instance;
+                        if (!_singletons.Contains(instance))
+                        {
+                            _singletons.Add(instance);
+                        }
+                    }
+
+                    return instance;
+                }
+
+                if (_parent != null)
+                {
+                    return _parent.Resolve(type);
+                }
+
+                if (type.IsInterface || type.IsAbstract)
+                {
+                    throw new Exception($"Cannot resolve interface or abstract type {type.FullName} without a binding.");
+                }
+
+                return Instantiate(type);
+            }
+            finally
+            {
+                _resolutionStack.Pop();
+            }
         }
 
         public T Instantiate<T>()
@@ -77,9 +106,13 @@ namespace Simon.Core.DI
 
         public object Instantiate(Type type)
         {
-            var constructor = type.GetConstructors()
-                .OrderByDescending(c => c.GetCustomAttribute<InjectAttribute>() != null)
-                .FirstOrDefault();
+            if (!_constructorCache.TryGetValue(type, out var constructor))
+            {
+                constructor = type.GetConstructors()
+                    .OrderByDescending(c => c.GetCustomAttribute<InjectAttribute>() != null)
+                    .FirstOrDefault();
+                _constructorCache[type] = constructor;
+            }
 
             object instance;
             if (constructor == null || constructor.GetParameters().Length == 0)
@@ -100,25 +133,54 @@ namespace Simon.Core.DI
 
         public void Inject(object instance)
         {
-            if (instance == null) return;
-            var type = instance.GetType();
+            if (instance == null || _injectedObjects.Contains(instance)) return;
+            _injectedObjects.Add(instance);
             
+            var type = instance.GetType();
+
             // Field Injection
-            var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(f => f.GetCustomAttribute<InjectAttribute>() != null);
+            if (!_fieldCache.TryGetValue(type, out var fields))
+            {
+                fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(f => f.GetCustomAttribute<InjectAttribute>() != null)
+                    .ToArray();
+                _fieldCache[type] = fields;
+            }
 
             foreach (var field in fields)
             {
                 field.SetValue(instance, Resolve(field.FieldType));
             }
-            
+
             // Property Injection
-            var props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                .Where(p => p.GetCustomAttribute<InjectAttribute>() != null);
+            if (!_propertyCache.TryGetValue(type, out var props))
+            {
+                props = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(p => p.GetCustomAttribute<InjectAttribute>() != null)
+                    .ToArray();
+                _propertyCache[type] = props;
+            }
 
             foreach (var prop in props)
             {
                 prop.SetValue(instance, Resolve(prop.PropertyType));
+            }
+
+            // Method Injection
+            if (!_methodCache.TryGetValue(type, out var methods))
+            {
+                methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Where(m => m.GetCustomAttribute<InjectAttribute>() != null)
+                    .ToArray();
+                _methodCache[type] = methods;
+            }
+
+            foreach (var method in methods)
+            {
+                var parameters = method.GetParameters()
+                    .Select(p => Resolve(p.ParameterType))
+                    .ToArray();
+                method.Invoke(instance, parameters);
             }
         }
 
@@ -146,7 +208,7 @@ namespace Simon.Core.DI
             if (setPrefabMethod != null)
                 setPrefabMethod.Invoke(factory, new object[] { prefab });
 
-            return Bind<TFactory>().FromInstance(factory).AsSingle();
+            return Bind<TFactory>().FromInstance(factory);
         }
 
         // Pool Registration Helpers
@@ -154,7 +216,7 @@ namespace Simon.Core.DI
         {
             var poolType = typeof(TPool);
             var pool = (TPool)Activator.CreateInstance(poolType);
-            Bind<TPool>().FromInstance(pool).AsSingle();
+            Bind<TPool>().FromInstance(pool);
             return new PoolBindingCondition(pool);
         }
 
@@ -167,11 +229,11 @@ namespace Simon.Core.DI
             if (setPrefabMethod != null)
                 setPrefabMethod.Invoke(pool, new object[] { prefab });
 
-            Bind<TPool>().FromInstance(pool).AsSingle();
+            Bind<TPool>().FromInstance(pool);
             return new PoolBindingCondition(pool);
         }
 
-        internal class PoolBindingCondition
+        public class PoolBindingCondition
         {
             private readonly object _pool;
             public PoolBindingCondition(object pool) => _pool = pool;
@@ -193,10 +255,18 @@ namespace Simon.Core.DI
 
         public void Initialize()
         {
-            // First pass: Instantiate all NonLazy singletons
+            // First pass: Ensure all singletons (including FromInstance) are injected and NonLazy are instantiated
             foreach (var binding in _bindings.Values.ToList())
             {
-                if (binding.IsNonLazy && binding.IsSingleton && binding.Instance == null)
+                if (binding.IsSingleton && binding.Instance != null)
+                {
+                    Inject(binding.Instance);
+                    if (!_singletons.Contains(binding.Instance))
+                    {
+                        _singletons.Add(binding.Instance);
+                    }
+                }
+                else if (binding.IsNonLazy && binding.IsSingleton && binding.Instance == null)
                 {
                     Resolve(binding.ContractType);
                 }
@@ -225,7 +295,7 @@ namespace Simon.Core.DI
             _bindings.Clear();
         }
 
-        internal class Binding
+        public class Binding
         {
             public Type ContractType;
             public Type ImplementationType;
@@ -234,10 +304,16 @@ namespace Simon.Core.DI
             public object Instance;
         }
 
-        internal class BindingCondition
+        public class BindingCondition
         {
             private readonly Binding _binding;
-            public BindingCondition(Binding binding) => _binding = binding;
+            private readonly DiContainer _container;
+
+            public BindingCondition(Binding binding, DiContainer container)
+            {
+                _binding = binding;
+                _container = container;
+            }
 
             public BindingCondition To<T>()
             {
@@ -261,6 +337,12 @@ namespace Simon.Core.DI
             {
                 _binding.Instance = instance;
                 _binding.IsSingleton = true;
+                return this;
+            }
+
+            public BindingCondition Expose<T>()
+            {
+                _container.Bind<T>().FromInstance(_binding.Instance);
                 return this;
             }
         }

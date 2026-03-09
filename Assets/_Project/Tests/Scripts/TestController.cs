@@ -8,23 +8,49 @@ namespace Simon.Tests
     internal class TestController : MvcController<ITestView, TestModel>
     {
         [Inject] private SignalBus _signalBus;
+        [Inject] private TestItemPool _itemPool;
+        [Inject] private TestBulletPool _bulletPool;
+        [Inject] private IViewSource<ITestView> _viewSource;
 
-        public override void Initialize()
+        protected override void OnInitialize()
         {
-            // Models are just data containers, so we create it here
-            Setup(new TestModel { Value = 100 });
+            // 1. Setup Model
+            Setup(new TestModel());
+
+            // 2. Spawn View using IViewSource (if not already set via manual DI)
+            if (View == null)
+            {
+                var view = _viewSource.Spawn(null); // Parent could be specified here
+                Setup(view, Model);
+            }
 
             View.OnButtonClicked += HandleButtonClick;
-            View.SetText($"Initial value from model: {Model.Value}");
+            
+            // Subscribe to model changes
+            Model.Value.OnValueChanged += OnValueChanged;
+            OnValueChanged(Model.Value.Value);
             
             _signalBus.Subscribe<TestSignal>(OnSignalReceived);
         }
 
+        private void OnValueChanged(int value)
+        {
+            View.SetText($"Clicks: {value}");
+        }
+
         private void HandleButtonClick()
         {
-            Model.Value++;
-            View.SetText($"Updated value: {Model.Value}");
-            _signalBus.Invoke(new TestSignal { Message = $"Value incremented to {Model.Value}" });
+            Model.Value.Value++;
+            
+            // 1. Demonstrate Class Pool
+            var item = _itemPool.Spawn();
+            _itemPool.Despawn(item);
+
+            // 2. Demonstrate Object Pool
+            var bullet = _bulletPool.Spawn();
+            _bulletPool.Despawn(bullet);
+
+            _signalBus.Invoke(new TestSignal { Message = $"Action executed, click count: {Model.Value.Value}" });
         }
 
         private void OnSignalReceived(TestSignal signal)
@@ -32,8 +58,9 @@ namespace Simon.Tests
             Debug.Log($"[TestController] Signal Received: {signal.Message}");
         }
 
-        public override void Dispose()
+        protected override void OnDispose()
         {
+            Model.Value.OnValueChanged -= OnValueChanged;
             _signalBus.Unsubscribe<TestSignal>(OnSignalReceived);
             if (View != null)
             {

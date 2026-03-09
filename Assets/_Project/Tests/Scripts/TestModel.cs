@@ -1,7 +1,9 @@
+using Simon.Core.MVC;
+
 namespace Simon.Tests
 {
     internal class TestModel
     {
-        public int Value;
+        public ReactiveProperty<int> Value = new ReactiveProperty<int>(0);
     }
 }

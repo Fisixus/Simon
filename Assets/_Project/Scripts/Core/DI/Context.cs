@@ -65,11 +65,14 @@ namespace Simon.Core.DI
     internal class ProjectContext : ContextBase
     {
         private static ProjectContext _instance;
+        private bool _isInitialized;
+
         public static ProjectContext Instance 
         {
             get 
             {
                 if (_instance == null) _instance = FindFirstObjectByType<ProjectContext>();
+                if (_instance != null) _instance.EnsureInitialized();
                 return _instance;
             }
         }
@@ -83,6 +86,13 @@ namespace Simon.Core.DI
             }
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            EnsureInitialized();
+        }
+
+        private void EnsureInitialized()
+        {
+            if (_isInitialized) return;
+            _isInitialized = true;
             InstallBindings();
         }
     }

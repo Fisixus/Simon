@@ -3,6 +3,14 @@ using System;
 
 namespace Simon.Core.DI
 {
+    // --- MVC Integration ---
+    internal interface IViewSource<T>
+    {
+        T Spawn(Transform parent);
+        void Despawn(T item);
+        bool HasSafeArea { get; }
+    }
+
     // --- Class Factories ---
     internal abstract class ClassFactory<T>
     {
