@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Simon.Core.DI;
 
 namespace Simon.Core.MVC
@@ -12,33 +11,6 @@ namespace Simon.Core.MVC
     public abstract class MvcView : UnityEngine.MonoBehaviour, IMvcView
     {
         public abstract void Initialize();
-    }
-
-    public class ReactiveProperty<T>
-    {
-        private T _value;
-        public event Action<T> OnValueChanged;
-
-        public T Value
-        {
-            get => _value;
-            set
-            {
-                if (EqualityComparer<T>.Default.Equals(_value, value)) return;
-                _value = value;
-                OnValueChanged?.Invoke(_value);
-            }
-        }
-
-        public ReactiveProperty(T defaultValue = default)
-        {
-            _value = defaultValue;
-        }
-
-        public void SetWithoutNotify(T value)
-        {
-            _value = value;
-        }
     }
 
     public abstract class MvcController<TViewInterface, TModel> : IInitializable, IDisposable

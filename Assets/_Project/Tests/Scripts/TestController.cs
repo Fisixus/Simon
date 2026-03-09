@@ -25,22 +25,20 @@ namespace Simon.Tests
             }
 
             View.OnButtonClicked += HandleButtonClick;
-            
-            // Subscribe to model changes
-            Model.Value.OnValueChanged += OnValueChanged;
-            OnValueChanged(Model.Value.Value);
+            UpdateView();
             
             _signalBus.Subscribe<TestSignal>(OnSignalReceived);
         }
 
-        private void OnValueChanged(int value)
+        private void UpdateView()
         {
-            View.SetText($"Clicks: {value}");
+            View.SetText($"Clicks: {Model.Value}");
         }
 
         private void HandleButtonClick()
         {
-            Model.Value.Value++;
+            Model.Value++;
+            UpdateView();
             
             // 1. Demonstrate Class Pool
             var item = _itemPool.Spawn();
@@ -50,7 +48,7 @@ namespace Simon.Tests
             var bullet = _bulletPool.Spawn();
             _bulletPool.Despawn(bullet);
 
-            _signalBus.Invoke(new TestSignal { Message = $"Action executed, click count: {Model.Value.Value}" });
+            _signalBus.Invoke(new TestSignal { Message = $"Action executed, click count: {Model.Value}" });
         }
 
         private void OnSignalReceived(TestSignal signal)
@@ -60,7 +58,6 @@ namespace Simon.Tests
 
         protected override void OnDispose()
         {
-            Model.Value.OnValueChanged -= OnValueChanged;
             _signalBus.Unsubscribe<TestSignal>(OnSignalReceived);
             if (View != null)
             {
