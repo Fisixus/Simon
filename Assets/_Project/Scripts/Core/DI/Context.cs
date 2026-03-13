@@ -20,6 +20,12 @@ namespace Simon.Core.DI
             Container = new DiContainer(parent);
             Container.Bind<DiContainer>().FromInstance(Container);
 
+            // 0. Auto-discover MonoInstallers if list is empty
+            if (_monoInstallers.Count == 0)
+            {
+                _monoInstallers.AddRange(GetComponents<MonoInstaller>());
+            }
+
             // 1. Process Prefab Installers (Instantiate and Install)
             foreach (var prefab in _prefabInstallers)
             {
@@ -71,8 +77,18 @@ namespace Simon.Core.DI
         {
             get 
             {
-                if (_instance == null) _instance = FindFirstObjectByType<ProjectContext>();
-                if (_instance != null) _instance.EnsureInitialized();
+                if (_instance == null)
+                {
+                    _instance = FindFirstObjectByType<ProjectContext>();
+                    if (_instance == null)
+                    {
+                        var go = new GameObject("ProjectContext");
+                        _instance = go.AddComponent<ProjectContext>();
+                        // Add ProjectInstaller by default if not present
+                        go.AddComponent<ProjectInstaller>();
+                    }
+                }
+                _instance.EnsureInitialized();
                 return _instance;
             }
         }

@@ -11,10 +11,7 @@ namespace Simon.Tests
 
         public override void InstallBindings()
         {
-            // 1. Bind Core Services
-            Container.Bind<SignalBus>().FromInstance(new SignalBus()).AsSingle();
-            
-            // 2. Bind View Factory and expose its Interface
+            // 1. Bind View Factory and expose its Interface
             Container.RegisterFactory<TestView, TestViewFactory>(_testViewPrefab)
                      .Expose<IViewSource<ITestView>>();
 

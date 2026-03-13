@@ -18,6 +18,8 @@ Simon is a Unity-based 2D project utilizing a custom-built architecture for Depe
 ### Dependency Injection (Simon.Core.DI)
 The project uses a custom IoC container that supports:
 - **Contexts**: Hierarchical lifetime management via `ProjectContext` (singleton), `Context` (scene-level), and `GameObjectContext`.
+- **ProjectInstaller**: Core services (like `SignalBus`) are bound here and initialized via `ProjectContext`.
+- **Auto-discovery**: `ContextBase` automatically discovers and installs `MonoInstaller` components attached to its GameObject if none are manually assigned.
 - **Injection**: Support for Constructor, Field, Property, and Method injection using the `[Inject]` attribute.
 - **Caching**: Reflection data (constructors, fields, properties, methods) is cached for performance.
 - **Circular Dependency Detection**: Throws an exception if a circular dependency is detected.
