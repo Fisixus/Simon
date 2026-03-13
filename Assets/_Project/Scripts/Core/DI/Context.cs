@@ -84,8 +84,6 @@ namespace Simon.Core.DI
                     {
                         var go = new GameObject("ProjectContext");
                         _instance = go.AddComponent<ProjectContext>();
-                        // Add ProjectInstaller by default if not present
-                        go.AddComponent<ProjectInstaller>();
                     }
                 }
                 _instance.EnsureInitialized();

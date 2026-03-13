@@ -1,7 +1,7 @@
 using Simon.Core.Events;
 using UnityEngine;
 
-namespace Simon.Core.DI
+namespace Simon.Tests
 {
     internal class ProjectInstaller : MonoInstaller
     {

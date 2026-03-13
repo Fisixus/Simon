@@ -11,7 +11,12 @@ namespace Simon.Tests
 
         public override void InstallBindings()
         {
-            // 1. Bind View Factory and expose its Interface
+            // 1. Ensure Core Services are present in Test
+            var projectInstaller = new GameObject("ProjectInstaller_Test").AddComponent<ProjectInstaller>();
+            Container.Inject(projectInstaller);
+            projectInstaller.InstallBindings();
+
+            // 2. Bind View Factory and expose its Interface
             Container.RegisterFactory<TestView, TestViewFactory>(_testViewPrefab)
                      .Expose<IViewSource<ITestView>>();
 
