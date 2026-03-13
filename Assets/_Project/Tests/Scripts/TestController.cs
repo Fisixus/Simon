@@ -28,12 +28,6 @@ namespace Simon.Tests
             View.OnButtonClicked += HandleButtonClick;
             UpdateView();
         }
-        
-        protected override void OnClose()
-        {
-            View.OnButtonClicked -= HandleButtonClick;
-            Close();
-        }
 
         private void UpdateView()
         {
