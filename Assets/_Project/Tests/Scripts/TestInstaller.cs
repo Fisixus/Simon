@@ -17,7 +17,9 @@ namespace Simon.Tests
 
             // 2. Register Pools
             Container.RegisterPool<TestItem, TestItemPool>().WithMinimumCount(5);
-            Container.RegisterPool<TestBullet, TestBulletPool>(_bulletPrefab).WithMinimumCount(10);
+            Container.RegisterPool<TestBullet, TestBulletPool>(_bulletPrefab)
+                     .WithRoot(transform)
+                     .WithMinimumCount(10);
             
             // 3. Bind the Controller
             Container.Bind<TestController>().AsSingle().NonLazy();

@@ -251,6 +251,14 @@ namespace Simon.Core.DI
                 if (prop != null) prop.SetValue(_pool, period);
                 return this;
             }
+
+            public PoolBindingCondition WithRoot(Transform root)
+            {
+                var setRootMethod = _pool.GetType().GetMethod("SetRoot");
+                if (setRootMethod != null)
+                    setRootMethod.Invoke(_pool, new object[] { root });
+                return this;
+            }
         }
 
         public void Initialize()

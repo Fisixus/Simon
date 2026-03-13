@@ -118,6 +118,7 @@ namespace Simon.Core.DI
         protected Transform Root;
 
         public void SetPrefab(T prefab) => Prefab = prefab;
+        public void SetRoot(Transform root) => Root = root;
 
         public override T Spawn()
         {
