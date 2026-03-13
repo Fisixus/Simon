@@ -1,3 +1,4 @@
+using Simon.Core.DI;
 using Simon.Core.Events;
 using UnityEngine;
 

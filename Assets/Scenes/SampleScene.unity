@@ -128,7 +128,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 395160058}
-  - component: {fileID: 395160057}
   m_Layer: 0
   m_Name: ProjectContext
   m_TagString: Untagged
@@ -136,23 +135,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &395160057
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 395160056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4903ef268da2e4850a23d763c12c9f6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Simon.Core::Simon.Core.DI.Context
-  _monoInstallers:
-  - {fileID: 4136441044036300181, guid: 006226c4a997d41e5b22d1bfb1d0a7fb, type: 3}
-  _scriptableObjectInstallers: []
-  _prefabInstallers: []
-  HasViewer: 1
 --- !u!4 &395160058
 Transform:
   m_ObjectHideFlags: 0
