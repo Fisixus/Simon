@@ -13,7 +13,6 @@ namespace Simon.Core.DI
         protected List<Installer> _installers = new List<Installer>();
 
         public DiContainer Container { get; protected set; }
-        public bool HasViewer;
 
         protected virtual void InstallBindings(DiContainer parent = null)
         {

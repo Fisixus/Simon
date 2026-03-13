@@ -1,4 +1,5 @@
 using Simon.Core.DI;
+using Simon.Core.MVC;
 using UnityEngine;
 
 namespace Simon.Tests
@@ -7,9 +8,14 @@ namespace Simon.Tests
     {
         [SerializeField] private TestView _testViewPrefab;
         [SerializeField] private TestBullet _bulletPrefab;
+        [SerializeField] private Viewer _viewer;
 
         public override void InstallBindings()
         {
+            // 0. Bind the Viewer instance
+            if (_viewer != null)
+                Container.Bind<Viewer>().FromInstance(_viewer).AsSingle();
+
             // 1. Bind View Factory and expose its Interface
             Container.RegisterFactory<TestView, TestViewFactory>(_testViewPrefab)
                      .Expose<IViewSource<ITestView>>();

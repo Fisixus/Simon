@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3386391270170790448}
   - component: {fileID: 4136441044036300181}
+  - component: {fileID: 4958552427953383934}
   m_Layer: 0
   m_Name: TestInstaller
   m_TagString: Untagged
@@ -46,3 +47,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Simon.Tests::Simon.Tests.TestInstaller
   _testViewPrefab: {fileID: 8674350223711401917, guid: 7ab5f12bac36e433186e9e5c26241c99, type: 3}
   _bulletPrefab: {fileID: 7218831742150233629, guid: 934968709b9e14c93a2ed3fef10f9107, type: 3}
+  _viewer: {fileID: 4958552427953383934}
+--- !u!114 &4958552427953383934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2132377990444667637}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4f37572a7b3e4f79b6fe25a005be7f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Simon.Core::Simon.Core.MVC.Viewer
+  _transform: {fileID: 3386391270170790448}

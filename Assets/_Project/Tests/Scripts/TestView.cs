@@ -1,5 +1,6 @@
 using Simon.Core.MVC;
 using System;
+using UnityEngine;
 
 namespace Simon.Tests
 {
@@ -8,12 +9,16 @@ namespace Simon.Tests
         event Action OnButtonClicked;
         void SetText(string text);
         void Cleanup();
+        Transform Transform { get; }
     }
 
     internal class TestView : MvcView, ITestView
     {
         [UnityEngine.SerializeField] private UnityEngine.UI.Text _displayText;
         [UnityEngine.SerializeField] private UnityEngine.UI.Button _actionButton;
+        [UnityEngine.SerializeField] private Transform _transform;
+        
+        public Transform Transform => _transform;
 
         public event Action OnButtonClicked;
 

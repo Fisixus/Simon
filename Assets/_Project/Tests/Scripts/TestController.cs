@@ -25,6 +25,7 @@ namespace Simon.Tests
 
         protected override void OnOpen()
         {
+            _bulletPool.SetRoot(View.Transform);
             View.OnButtonClicked += HandleButtonClick;
             UpdateView();
         }

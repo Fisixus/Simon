@@ -118,7 +118,17 @@ namespace Simon.Core.DI
         protected Transform Root;
 
         public void SetPrefab(T prefab) => Prefab = prefab;
-        public void SetRoot(Transform root) => Root = root;
+        public void SetRoot(Transform root)
+        {
+            Root = root;
+            if (Root == null) return;
+
+            foreach (var item in _pool)
+            {
+                if (item is Component comp) comp.transform.SetParent(Root);
+                else if (item is GameObject go) go.transform.SetParent(Root);
+            }
+        }
 
         public override T Spawn()
         {
