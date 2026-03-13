@@ -4,28 +4,28 @@ using UnityEngine;
 
 namespace Simon.Core.DI
 {
-    internal interface IInstaller
+    public interface IInstaller
     {
         void InstallBindings();
     }
 
-    internal abstract class Installer : IInstaller
+    public abstract class Installer : IInstaller
     {
         [Inject] protected DiContainer Container { get; set; }
         public abstract void InstallBindings();
     }
 
-    internal abstract class MonoInstaller : MonoBehaviour, IInstaller
+    public abstract class MonoInstaller : MonoBehaviour, IInstaller
     {
         [Inject] protected DiContainer Container { get; set; }
         public abstract void InstallBindings();
     }
 
-    internal abstract class ScriptableObjectInstaller : ScriptableObject, IInstaller
+    public abstract class ScriptableObjectInstaller : ScriptableObject, IInstaller
     {
         [Inject] protected DiContainer Container { get; set; }
         public abstract void InstallBindings();
     }
 
-    internal abstract class PrefabInstaller : MonoInstaller { }
+    public abstract class PrefabInstaller : MonoInstaller { }
 }

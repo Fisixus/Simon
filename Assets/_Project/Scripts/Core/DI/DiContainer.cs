@@ -6,15 +6,15 @@ using UnityEngine;
 
 namespace Simon.Core.DI
 {
-    internal interface IInitializable
+    public interface IInitializable
     {
         void Initialize();
     }
 
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Method)]
-    internal class InjectAttribute : Attribute { }
+    public class InjectAttribute : Attribute { }
 
-    internal class DiContainer : IDisposable
+    public class DiContainer : IDisposable
     {
         private readonly Dictionary<Type, Binding> _bindings = new Dictionary<Type, Binding>();
         private readonly List<object> _singletons = new List<object>();
@@ -233,7 +233,7 @@ namespace Simon.Core.DI
             return new PoolBindingCondition(pool);
         }
 
-        internal class PoolBindingCondition
+        public class PoolBindingCondition
         {
             private readonly object _pool;
             public PoolBindingCondition(object pool) => _pool = pool;
@@ -295,7 +295,7 @@ namespace Simon.Core.DI
             _bindings.Clear();
         }
 
-        internal class Binding
+        public class Binding
         {
             public Type ContractType;
             public Type ImplementationType;
@@ -304,7 +304,7 @@ namespace Simon.Core.DI
             public object Instance;
         }
 
-        internal class BindingCondition
+        public class BindingCondition
         {
             private readonly Binding _binding;
             private readonly DiContainer _container;

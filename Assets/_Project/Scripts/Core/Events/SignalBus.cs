@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Simon.Core.Events
 {
-    internal interface ISignal {}
+    public interface ISignal {}
 
-    internal class SignalBus
+    public class SignalBus
     {
         private readonly Dictionary<Type, List<Action<ISignal>>> _subscribers = new Dictionary<Type, List<Action<ISignal>>>();
         private readonly Dictionary<Delegate, Action<ISignal>> _callbackMapping = new Dictionary<Delegate, Action<ISignal>>();
