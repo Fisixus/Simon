@@ -11,6 +11,10 @@ Simon is a Unity-based 2D project utilizing a custom-built architecture for Depe
 - **Assembly Definitions**:
     - `Simon.Core.asmdef`: Core framework assembly.
     - `Simon.Tests.asmdef`: Testing assembly with access to core internals via `InternalsVisibleTo`.
+- **Test Components**:
+    - `TestProjectInstaller`: Binds test-specific core services (`SignalBus`, `TestSceneManager`, `TestGameManager`).
+    - `TestSceneManager`: Handles scene transitions (e.g., `LoadMainMenu`) via signals.
+    - `TestGameManager`: Entry point for test logic, triggers initial scene loading.
 - **Assets/_Project/Tests**: Contains architectural tests and example usage patterns.
 
 ## Architecture & Frameworks
@@ -18,7 +22,7 @@ Simon is a Unity-based 2D project utilizing a custom-built architecture for Depe
 ### Dependency Injection (Simon.Core.DI)
 The project uses a custom IoC container that supports:
 - **Contexts**: Hierarchical lifetime management via `ProjectContext` (singleton), `Context` (scene-level), and `GameObjectContext`.
-- **ProjectInstaller**: Core services (like `SignalBus`) are bound here and initialized via `ProjectContext`.
+- **TestProjectInstaller**: Core services (like `SignalBus`) are bound here for testing purposes.
 - **Auto-discovery**: `ContextBase` automatically discovers and installs `MonoInstaller` components attached to its GameObject if none are manually assigned.
 - **Injection**: Support for Constructor, Field, Property, and Method injection using the `[Inject]` attribute.
 - **Caching**: Reflection data (constructors, fields, properties, methods) is cached for performance.

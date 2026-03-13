@@ -15,8 +15,11 @@ namespace Simon.Tests
         {
             // Initializing the controller
             _signalBus.Subscribe<TestSignal>(OnSignalReceived);
-            
-            // For testing purposes, let's open it immediately with a default model
+            _signalBus.Subscribe<TestLoadMainMenuSignal>(OnLoadMainMenu);
+        }
+
+        private void OnLoadMainMenu(TestLoadMainMenuSignal signal)
+        {
             Open(new TestModel { Value = 0 });
         }
 
@@ -24,6 +27,12 @@ namespace Simon.Tests
         {
             View.OnButtonClicked += HandleButtonClick;
             UpdateView();
+        }
+        
+        protected override void OnClose()
+        {
+            View.OnButtonClicked -= HandleButtonClick;
+            Close();
         }
 
         private void UpdateView()
@@ -64,6 +73,7 @@ namespace Simon.Tests
         protected override void OnDispose()
         {
             _signalBus.Unsubscribe<TestSignal>(OnSignalReceived);
+            _signalBus.Unsubscribe<TestLoadMainMenuSignal>(OnLoadMainMenu);
         }
     }
 }
