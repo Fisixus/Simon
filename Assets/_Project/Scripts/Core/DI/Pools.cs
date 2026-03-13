@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Simon.Core.DI
 {
     // --- Interfaces ---
-    public interface ISpawnable { void OnSpawn(); }
-    public interface IDespawnable { void OnDespawn(); }
+    internal interface ISpawnable { void OnSpawn(); }
+    internal interface IDespawnable { void OnDespawn(); }
 
     // --- Base Pool ---
-    public abstract class PoolBase<T> : IInitializable
+    internal abstract class PoolBase<T> : IInitializable
     {
         [Inject] protected DiContainer Container { get; set; }
         
@@ -52,7 +52,7 @@ namespace Simon.Core.DI
     }
 
     // --- Class Pool ---
-    public abstract class ClassPool<T> : PoolBase<T> where T : class
+    internal abstract class ClassPool<T> : PoolBase<T> where T : class
     {
         public override T Spawn()
         {
@@ -74,7 +74,7 @@ namespace Simon.Core.DI
         protected abstract void ResetInstance(T item);
     }
 
-    public abstract class ClassPool<T, TModel> : PoolBase<T> where T : class
+    internal abstract class ClassPool<T, TModel> : PoolBase<T> where T : class
     {
         public virtual T Spawn(TModel model)
         {
@@ -112,7 +112,7 @@ namespace Simon.Core.DI
     }
 
     // --- Object Pool ---
-    public abstract class ObjectPool<T> : PoolBase<T> where T : UnityEngine.Object
+    internal abstract class ObjectPool<T> : PoolBase<T> where T : UnityEngine.Object
     {
         protected T Prefab;
         protected Transform Root;

@@ -3,17 +3,17 @@ using Simon.Core.DI;
 
 namespace Simon.Core.MVC
 {
-    public interface IMvcView 
+    internal interface IMvcView 
     {
         void Initialize();
     }
 
-    public abstract class MvcView : UnityEngine.MonoBehaviour, IMvcView
+    internal abstract class MvcView : UnityEngine.MonoBehaviour, IMvcView
     {
         public abstract void Initialize();
     }
 
-    public abstract class MvcController<TViewInterface, TModel> : IInitializable, IDisposable
+    internal abstract class MvcController<TViewInterface, TModel> : IInitializable, IDisposable
         where TViewInterface : class, IMvcView
     {
         [Inject] public TViewInterface View { get; protected set; }

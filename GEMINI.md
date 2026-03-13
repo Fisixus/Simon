@@ -8,6 +8,9 @@ Simon is a Unity-based 2D project utilizing a custom-built architecture for Depe
     - **DI**: Dependency Injection container, contexts (`ProjectContext`, `Context`, `GameObjectContext`), and installers.
     - **MVC**: Base classes for Views and Controllers.
     - **Events**: `SignalBus` for decoupled event-driven communication.
+- **Assembly Definitions**:
+    - `Simon.Core.asmdef`: Core framework assembly.
+    - `Simon.Tests.asmdef`: Testing assembly with access to core internals via `InternalsVisibleTo`.
 - **Assets/_Project/Tests**: Contains architectural tests and example usage patterns.
 
 ## Architecture & Frameworks
