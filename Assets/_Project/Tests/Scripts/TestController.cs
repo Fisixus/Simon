@@ -61,7 +61,7 @@ namespace Simon.Tests
             Debug.Log($"[TestController] Signal Received: {signal.Message}");
         }
 
-        protected override void OnReset()
+        protected override void OnClose()
         {
             if (View != null)
             {

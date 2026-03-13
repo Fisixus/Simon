@@ -35,7 +35,7 @@ The project uses a custom IoC container that supports:
 - **Controller**: C# classes inheriting from `MvcController<TViewInterface, TModel>`. 
     - Mediates between View, Model, and `ViewOperator`.
     - Handles spawning via `IViewSource` and animation via `ViewOperator`.
-    - Lifecycle hooks: `OnInitialize()`, `OnOpen()`, `OnClose()`, `OnReset()`, and `OnDispose()`.
+    - Lifecycle hooks: `OnInitialize()`, `OnOpen()`, `OnClose()`, and `OnDispose()`.
 - **ViewOperator**: Manages transition states (`Opening`, `Opened`, `Closing`, `Closed`) and animation progress.
 - **Viewer**: A component that hosts view coroutines and provides the root UI context (Canvas/RectTransform).
 

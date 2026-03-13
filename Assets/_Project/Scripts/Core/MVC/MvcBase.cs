@@ -7,11 +7,15 @@ namespace Simon.Core.MVC
     public interface IMvcView 
     {
         void Initialize();
+        void Open();
+        void Close();
     }
 
     public abstract class MvcView : MonoBehaviour, IMvcView
     {
         public abstract void Initialize();
+        public virtual void Open() => gameObject.SetActive(true);
+        public virtual void Close() => gameObject.SetActive(false);
     }
 
     public abstract class ViewModel
@@ -73,7 +77,7 @@ namespace Simon.Core.MVC
             
             OnOpen();
             
-            ViewOperator.ResetViewAction += Reset;
+            ViewOperator.ResetViewAction += Cleanup;
             
             // Note: If we had a MenuPopupQueue, we would use it here.
             // For now, we open immediately.
@@ -92,10 +96,8 @@ namespace Simon.Core.MVC
             OnClose();
         }
 
-        protected virtual void Reset()
+        private void Cleanup()
         {
-            OnReset();
-            
             if (View != null)
             {
                 ViewSource.Despawn(View);
@@ -114,7 +116,6 @@ namespace Simon.Core.MVC
         protected virtual void OnInitialize() { }
         protected virtual void OnOpen() { }
         protected virtual void OnClose() { }
-        protected virtual void OnReset() { }
         protected virtual void OnDispose() { }
     }
 }
