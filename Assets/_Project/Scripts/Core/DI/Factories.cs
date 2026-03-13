@@ -8,7 +8,6 @@ namespace Simon.Core.DI
     {
         T Spawn(Transform parent);
         void Despawn(T item);
-        bool HasSafeArea { get; }
     }
 
     // --- Class Factories ---

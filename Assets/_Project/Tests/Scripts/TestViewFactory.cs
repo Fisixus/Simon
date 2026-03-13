@@ -16,10 +16,10 @@ namespace Simon.Tests
         {
             if (item is MonoBehaviour mono)
             {
-                UnityEngine.Object.Destroy(mono.gameObject);
+                if(item != null)
+                    UnityEngine.Object.Destroy(mono.gameObject);
             }
         }
 
-        public bool HasSafeArea => false;
     }
 }

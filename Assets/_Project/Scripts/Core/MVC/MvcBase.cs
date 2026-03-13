@@ -72,15 +72,13 @@ namespace Simon.Core.MVC
 
             ViewOperator = new ViewOperator();
             
-            // Default implementation: spawn on viewer's rect transform
+            // Default implementation: spawn on viewer's transform
             View = ViewSource.Spawn(Viewer.Transform);
             
             OnOpen();
             
             ViewOperator.ResetViewAction += Cleanup;
             
-            // Note: If we had a MenuPopupQueue, we would use it here.
-            // For now, we open immediately.
             ViewOperator.Open(Viewer);
         }
 
