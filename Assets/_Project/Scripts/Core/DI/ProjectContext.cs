@@ -56,5 +56,14 @@ namespace Simon.Core.DI
             _isInitialized = true;
             InstallBindings();
         }
+
+        protected override void OnDestroy()
+        {
+            if (_instance == this)
+            {
+                base.OnDestroy();
+                _instance = null;
+            }
+        }
     }
 }

@@ -128,6 +128,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 395160058}
+  - component: {fileID: 395160059}
+  - component: {fileID: 395160060}
   m_Layer: 0
   m_Name: ProjectContext
   m_TagString: Untagged
@@ -150,6 +152,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &395160059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395160056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9ba7c3d30507483188cc8bc02e3c45b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Simon.Core::Simon.Core.DI.ProjectContext
+  _monoInstallers:
+  - {fileID: 395160060}
+  _scriptableObjectInstallers: []
+  _prefabInstallers: []
+  HasViewer: 0
+--- !u!114 &395160060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395160056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5273474508bc44848c46fbe9ed78248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Simon.Tests::Simon.Tests.ProjectInstaller
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0

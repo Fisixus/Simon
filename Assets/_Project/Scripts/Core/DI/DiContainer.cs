@@ -286,6 +286,9 @@ namespace Simon.Core.DI
         {
             foreach (var singleton in _singletons)
             {
+                if (singleton == this) continue; // Prevent recursion
+                if (singleton == null || singleton.Equals(null)) continue; // Unity null check
+                
                 if (singleton is IDisposable disposable)
                 {
                     disposable.Dispose();
@@ -293,6 +296,7 @@ namespace Simon.Core.DI
             }
             _singletons.Clear();
             _bindings.Clear();
+            _injectedObjects.Clear();
         }
 
         public class Binding
