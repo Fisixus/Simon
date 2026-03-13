@@ -36,5 +36,6 @@ namespace Simon.Tests
             if (_actionButton != null)
                 _actionButton.onClick.RemoveAllListeners();
         }
+        
     }
 }

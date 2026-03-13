@@ -1,5 +1,6 @@
 using Simon.Core.DI;
 using Simon.Core.Events;
+using Simon.Core.MVC;
 using UnityEngine;
 
 namespace Simon.Tests

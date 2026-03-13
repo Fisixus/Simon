@@ -10,24 +10,20 @@ namespace Simon.Tests
         [Inject] private SignalBus _signalBus;
         [Inject] private TestItemPool _itemPool;
         [Inject] private TestBulletPool _bulletPool;
-        [Inject] private IViewSource<ITestView> _viewSource;
 
         protected override void OnInitialize()
         {
-            // 1. Setup Model
-            Setup(new TestModel());
+            // Initializing the controller
+            _signalBus.Subscribe<TestSignal>(OnSignalReceived);
+            
+            // For testing purposes, let's open it immediately with a default model
+            Open(new TestModel { Value = 0 });
+        }
 
-            // 2. Spawn View using IViewSource (if not already set via manual DI)
-            if (View == null)
-            {
-                var view = _viewSource.Spawn(null); // Parent could be specified here
-                Setup(view, Model);
-            }
-
+        protected override void OnOpen()
+        {
             View.OnButtonClicked += HandleButtonClick;
             UpdateView();
-            
-            _signalBus.Subscribe<TestSignal>(OnSignalReceived);
         }
 
         private void UpdateView()
@@ -56,14 +52,18 @@ namespace Simon.Tests
             Debug.Log($"[TestController] Signal Received: {signal.Message}");
         }
 
-        protected override void OnDispose()
+        protected override void OnReset()
         {
-            _signalBus.Unsubscribe<TestSignal>(OnSignalReceived);
             if (View != null)
             {
                 View.OnButtonClicked -= HandleButtonClick;
                 View.Cleanup();
             }
+        }
+
+        protected override void OnDispose()
+        {
+            _signalBus.Unsubscribe<TestSignal>(OnSignalReceived);
         }
     }
 }

@@ -26,9 +26,14 @@ The project uses a custom IoC container that supports:
 - **Installers**: Bindings are configured in `MonoInstaller`, `ScriptableObjectInstaller`, or `PrefabInstaller`.
 
 ### MVC Pattern (Simon.Core.MVC)
-- **Model**: Data classes holding state.
+- **Model**: Data classes inheriting from `ViewModel`. Holds state and transition parameters (`ForceOpen`, `QueuePriority`).
 - **View**: `MonoBehaviour` classes inheriting from `MvcView` and implementing a view interface.
-- **Controller**: C# classes inheriting from `MvcController<TViewInterface, TModel>`. They use `OnInitialize()` and ` OnDispose()` lifecycle hooks.
+- **Controller**: C# classes inheriting from `MvcController<TViewInterface, TModel>`. 
+    - Mediates between View, Model, and `ViewOperator`.
+    - Handles spawning via `IViewSource` and animation via `ViewOperator`.
+    - Lifecycle hooks: `OnInitialize()`, `OnOpen()`, `OnClose()`, `OnReset()`, and `OnDispose()`.
+- **ViewOperator**: Manages transition states (`Opening`, `Opened`, `Closing`, `Closed`) and animation progress.
+- **Viewer**: A component that hosts view coroutines and provides the root UI context (Canvas/RectTransform).
 
 ### Event System (Simon.Core.Events)
 A `SignalBus` is used for global or context-specific communication. Signals are defined as simple classes or structs.
