@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace Simon.Core.DI
 {
-    // Context: Created per scene (previously SceneContext)
-    public class Context : ContextBase
+    public class SceneContext : ContextBase
     {
         private void Awake()
         {

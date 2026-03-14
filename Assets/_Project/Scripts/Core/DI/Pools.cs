@@ -73,44 +73,7 @@ namespace Simon.Core.DI
         protected abstract T CreateInstance();
         protected abstract void ResetInstance(T item);
     }
-
-    public abstract class ClassPool<T, TModel> : PoolBase<T> where T : class
-    {
-        public virtual T Spawn(TModel model)
-        {
-            T item = _pool.Count > 0 ? _pool.Pop() : CreateInstanceForPool(model);
-            Container.Inject(item);
-            HandleSpawn(item);
-            return item;
-        }
-
-        public override T Spawn() => throw new NotSupportedException("Use Spawn(TModel model) instead.");
-
-        public override void Despawn(T item)
-        {
-            HandleDespawn(item);
-            _pool.Push(item);
-        }
-
-        public virtual void Despawn(T item, TModel model)
-        {
-            HandleDespawn(item);
-            ResetInstance(item, model);
-            _pool.Push(item);
-        }
-
-        protected override void Prewarm()
-        {
-            // Cannot prewarm ClassPool with Model because model is unknown.
-            // If prewarming is needed, override this and provide a default model.
-        }
-
-        protected override T CreateInstanceForPool() => throw new NotSupportedException("ClassPool with Model requires a model for instantiation.");
-        protected virtual T CreateInstanceForPool(TModel model) => CreateInstance(model);
-        protected abstract T CreateInstance(TModel model);
-        protected abstract void ResetInstance(T item, TModel model);
-    }
-
+    
     // --- Object Pool ---
     public abstract class ObjectPool<T> : PoolBase<T> where T : UnityEngine.Object
     {
