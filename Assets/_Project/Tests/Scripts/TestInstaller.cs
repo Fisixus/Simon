@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Simon.Tests
 {
-    internal class TestInstaller : PrefabInstaller
+    internal class TestInstaller : MonoInstaller
     {
         [SerializeField] private TestView _testViewPrefab;
         [SerializeField] private TestBullet _bulletPrefab;

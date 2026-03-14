@@ -129,6 +129,8 @@ GameObject:
   m_Component:
   - component: {fileID: 395160058}
   - component: {fileID: 395160059}
+  - component: {fileID: 395160060}
+  - component: {fileID: 395160061}
   m_Layer: 0
   m_Name: MainMenuContext
   m_TagString: Untagged
@@ -163,11 +165,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4903ef268da2e4850a23d763c12c9f6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Simon.Core::Simon.Core.DI.Context
-  _monoInstallers: []
+  _monoInstallers:
+  - {fileID: 395160060}
   _scriptableObjectInstallers: []
-  _prefabInstallers:
-  - {fileID: 4136441044036300181, guid: 006226c4a997d41e5b22d1bfb1d0a7fb, type: 3}
-  HasViewer: 0
+  _prefabInstallers: []
+--- !u!114 &395160060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395160056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3697e37f587ef493b921a60e5e68448a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Simon.Tests::Simon.Tests.TestInstaller
+  _testViewPrefab: {fileID: 8674350223711401917, guid: 7ab5f12bac36e433186e9e5c26241c99, type: 3}
+  _bulletPrefab: {fileID: 7218831742150233629, guid: 934968709b9e14c93a2ed3fef10f9107, type: 3}
+  _viewer: {fileID: 395160061}
+--- !u!114 &395160061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 395160056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4f37572a7b3e4f79b6fe25a005be7f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Simon.Core::Simon.Core.MVC.Viewer
+  _transform: {fileID: 395160058}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

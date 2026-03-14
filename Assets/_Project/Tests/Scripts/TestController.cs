@@ -49,6 +49,8 @@ namespace Simon.Tests
             _bulletPool.Despawn(bullet);
 
             _signalBus.Invoke(new TestSignal { Message = $"Action executed, click count: {Model.Value}" });
+            if(Model.Value == 10)
+                Close();
         }
 
         private void OnSignalReceived(TestSignal signal)

@@ -450,6 +450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6985972314738743467}
   - component: {fileID: 8674350223711401917}
+  - component: {fileID: 7720006046149693231}
   m_Layer: 0
   m_Name: TestView
   m_TagString: Untagged
@@ -487,4 +488,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Simon.Tests::Simon.Tests.TestView
   _displayText: {fileID: 5748731462997136105}
   _actionButton: {fileID: 6743633348299135065}
+  _transform: {fileID: 6985972314738743467}
+--- !u!114 &7720006046149693231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8337184793493234258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4f37572a7b3e4f79b6fe25a005be7f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Simon.Core::Simon.Core.MVC.Viewer
   _transform: {fileID: 6985972314738743467}
