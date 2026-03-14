@@ -46,11 +46,30 @@ namespace Simon.Tests
 
             // 2. Demonstrate Object Pool
             var bullet = _bulletPool.Spawn();
-            _bulletPool.Despawn(bullet);
+            bullet.transform.localPosition = new Vector3(Random.Range(-200f, 200f), Random.Range(-200f, 200f), 0);
+
+            Viewer.StartCoroutine(MoveAndDespawn(bullet));
 
             _signalBus.Invoke(new TestSignal { Message = $"Action executed, click count: {Model.Value}" });
-            if(Model.Value == 10)
-                Close();
+            //if(Model.Value == 10)
+                //Close();
+        }
+
+        private System.Collections.IEnumerator MoveAndDespawn(TestBullet bullet)
+        {
+            float elapsed = 0;
+            Vector3 startPos = bullet.transform.localPosition;
+            Vector3 targetPos = startPos + Vector3.up * 100f;
+
+            while (elapsed < 2f)
+            {
+                if (bullet == null) yield break;
+                bullet.transform.localPosition = Vector3.Lerp(startPos, targetPos, elapsed / 2f);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            _bulletPool.Despawn(bullet);
         }
 
         private void OnSignalReceived(TestSignal signal)
