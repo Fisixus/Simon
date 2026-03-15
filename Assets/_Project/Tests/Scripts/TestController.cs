@@ -51,8 +51,8 @@ namespace Simon.Tests
             Viewer.StartCoroutine(MoveAndDespawn(bullet));
 
             _signalBus.Invoke(new TestSignal { Message = $"Action executed, click count: {Model.Value}" });
-            //if(Model.Value == 10)
-                //Close();
+            if(Model.Value == 10)
+                Close();
         }
 
         private System.Collections.IEnumerator MoveAndDespawn(TestBullet bullet)
@@ -82,7 +82,6 @@ namespace Simon.Tests
             if (View != null)
             {
                 View.OnButtonClicked -= HandleButtonClick;
-                View.Cleanup();
             }
         }
 

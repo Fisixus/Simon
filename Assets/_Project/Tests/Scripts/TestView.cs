@@ -8,7 +8,6 @@ namespace Simon.Tests
     {
         event Action OnButtonClicked;
         void SetText(string text);
-        void Cleanup();
         Transform Transform { get; }
     }
 
@@ -36,11 +35,5 @@ namespace Simon.Tests
                 UnityEngine.Debug.Log($"[TestView] {text}");
         }
 
-        public void Cleanup()
-        {
-            if (_actionButton != null)
-                _actionButton.onClick.RemoveAllListeners();
-        }
-        
     }
 }
